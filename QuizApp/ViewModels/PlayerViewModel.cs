@@ -13,11 +13,13 @@ namespace QuizApp.ViewModels
         private readonly DataService _dataService;
         private string _timerText;
         private string _currentQuestionImage;
+        private string _progressText;
         private string _resultMessage;
         private string _resultColor;
         private bool _isIdle;
         private bool _isPlaying;
         private bool _isResult;
+        private bool _hasPassChance;
 
         public ObservableCollection<Theme> Themes { get; private set; }
 
@@ -33,6 +35,12 @@ namespace QuizApp.ViewModels
             set => SetProperty(ref _currentQuestionImage, value);
         }
 
+        public string ProgressText
+        {
+            get => _progressText;
+            set => SetProperty(ref _progressText, value);
+        }
+
         public string ResultMessage
         {
             get => _resultMessage;
@@ -45,6 +53,12 @@ namespace QuizApp.ViewModels
             set => SetProperty(ref _resultColor, value);
         }
 
+        public bool HasPassChance
+        {
+            get => _hasPassChance;
+            set => SetProperty(ref _hasPassChance, value);
+        }
+        
         // 화면 상태 제어용 속성
         public bool IsIdle
         {
@@ -77,8 +91,10 @@ namespace QuizApp.ViewModels
 
             _timerText = "00:00";
             _currentQuestionImage = "";
+            _progressText = "";
             _resultMessage = "";
             _resultColor = "Black";
+            _hasPassChance = true;
             
             // 초기 상태
             IsIdle = true;
@@ -94,8 +110,17 @@ namespace QuizApp.ViewModels
             _gameService.GameStatusChanged += OnGameStatusChanged;
             _gameService.TimeUpdated += OnTimeUpdated;
             _gameService.QuestionChanged += OnQuestionChanged;
+            _gameService.PassStateChanged += OnPassStateChanged;
 
             LoadThemes();
+        }
+
+        private void OnPassStateChanged(bool isPassUsed)
+        {
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                HasPassChance = !isPassUsed;
+            });
         }
 
         private void OpenEditor(object? parameter)
@@ -176,6 +201,7 @@ namespace QuizApp.ViewModels
                 if (question != null)
                 {
                     CurrentQuestionImage = question.ImagePath;
+                    ProgressText = $"{_gameService.CurrentQuestionNumber} / {_gameService.TotalQuestions}";
                 }
             });
         }

@@ -13,6 +13,7 @@ namespace QuizApp.ViewModels
         private string _timerText;
         private string _currentAnswer;
         private string _currentImage;
+        private bool _canPass;
 
         public string CurrentStatusMessage
         {
@@ -38,10 +39,17 @@ namespace QuizApp.ViewModels
             set => SetProperty(ref _currentImage, value);
         }
 
+        public bool CanPass
+        {
+            get => _canPass;
+            set => SetProperty(ref _canPass, value);
+        }
+
         public ICommand CorrectCommand { get; }
         public ICommand FailCommand { get; }
         public ICommand StartGameCommand { get; }
         public ICommand StopGameCommand { get; }
+        public ICommand PassCommand { get; }
 
         // 테스트용: 게임 시작을 위한 테마 주입
         public Theme? TestTheme { get; set; }
@@ -54,13 +62,16 @@ namespace QuizApp.ViewModels
             _timerText = "00:00";
             _currentAnswer = "-";
             _currentImage = string.Empty;
+            _canPass = false;
 
             _gameService.GameStatusChanged += OnGameStatusChanged;
             _gameService.TimeUpdated += OnTimeUpdated;
             _gameService.QuestionChanged += OnQuestionChanged;
+            _gameService.PassStateChanged += OnPassStateChanged;
 
             CorrectCommand = new RelayCommand(_ => _gameService.MarkCorrect(), _ => _gameService.CurrentStatus == GameStatus.Playing);
             FailCommand = new RelayCommand(_ => _gameService.MarkFail(), _ => _gameService.CurrentStatus == GameStatus.Playing);
+            PassCommand = new RelayCommand(_ => _gameService.PassCurrentQuestion(), _ => _gameService.CurrentStatus == GameStatus.Playing && !_gameService.IsPassUsed);
             
             // 테스트용: 임시 시작 커맨드 (실제로는 PlayerWindow에서 테마 선택 시 시작됨)
             StartGameCommand = new RelayCommand(_ => 
@@ -69,6 +80,14 @@ namespace QuizApp.ViewModels
             }, _ => TestTheme != null && _gameService.CurrentStatus == GameStatus.Idle);
             
             StopGameCommand = new RelayCommand(_ => _gameService.StopGame(), _ => _gameService.CurrentStatus == GameStatus.Playing);
+        }
+
+        private void OnPassStateChanged(bool isPassUsed)
+        {
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                ((RelayCommand)PassCommand).RaiseCanExecuteChanged();
+            });
         }
 
         private void OnGameStatusChanged(GameStatus status)
@@ -86,6 +105,7 @@ namespace QuizApp.ViewModels
                 
                 ((RelayCommand)CorrectCommand).RaiseCanExecuteChanged();
                 ((RelayCommand)FailCommand).RaiseCanExecuteChanged();
+                ((RelayCommand)PassCommand).RaiseCanExecuteChanged();
                 ((RelayCommand)StartGameCommand).RaiseCanExecuteChanged();
                 ((RelayCommand)StopGameCommand).RaiseCanExecuteChanged();
             });

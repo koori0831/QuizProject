@@ -15,21 +15,29 @@ namespace QuizApp.Services
     {
         private System.Timers.Timer _timer;
         private List<Question> _currentQuestions;
+        private Theme _currentTheme;
         private int _currentQuestionIndex;
         private int _timeRemaining;
-        
+        private bool _isPassUsed;
+
         // 이벤트
         public event Action<int>? TimeUpdated;
         public event Action<GameStatus>? GameStatusChanged;
         public event Action<Question?>? QuestionChanged;
+        public event Action<bool>? PassStateChanged;
 
         public GameStatus CurrentStatus { get; private set; } = GameStatus.Idle;
+        public bool IsPassUsed => _isPassUsed;
+
         public Question? CurrentQuestion => 
             (CurrentStatus == GameStatus.Playing && _currentQuestions != null && _currentQuestionIndex < _currentQuestions.Count) 
             ? _currentQuestions[_currentQuestionIndex] 
             : null;
 
         public int TimeRemaining => _timeRemaining;
+        
+        public int CurrentQuestionNumber => _currentQuestionIndex + 1;
+        public int TotalQuestions => _currentQuestions?.Count ?? 0;
 
         public GameService()
         {
@@ -40,12 +48,15 @@ namespace QuizApp.Services
 
         public void StartGame(Theme theme, int timeLimitSeconds = 60)
         {
-            if (theme.Questions.Count < 3)
+            if (theme.Questions.Count < 4)
             {
-                throw new InvalidOperationException("문제가 3개 미만인 테마로는 게임을 시작할 수 없습니다.");
+                throw new InvalidOperationException("문제가 4개 미만인 테마로는 게임을 시작할 수 없습니다.");
             }
 
-            // 랜덤하게 3문제 추출
+            _currentTheme = theme;
+            _isPassUsed = false;
+
+            // 랜덤하게 3문제 추출 (여분 문제는 패스 시 사용)
             var random = new Random();
             _currentQuestions = theme.Questions.OrderBy(x => random.Next()).Take(3).ToList();
             
@@ -56,6 +67,7 @@ namespace QuizApp.Services
             GameStatusChanged?.Invoke(CurrentStatus);
             QuestionChanged?.Invoke(CurrentQuestion);
             TimeUpdated?.Invoke(_timeRemaining);
+            PassStateChanged?.Invoke(_isPassUsed);
             
             _timer.Start();
         }
@@ -66,6 +78,28 @@ namespace QuizApp.Services
             CurrentStatus = GameStatus.Idle;
             GameStatusChanged?.Invoke(CurrentStatus);
             QuestionChanged?.Invoke(null);
+        }
+
+        public bool PassCurrentQuestion()
+        {
+            if (CurrentStatus != GameStatus.Playing || _isPassUsed) return false;
+
+            // 현재 사용되지 않은 문제들 찾기
+            var availableQuestions = _currentTheme.Questions.Except(_currentQuestions).ToList();
+            
+            if (availableQuestions.Count == 0) return false; // 교체할 문제가 없음
+
+            var random = new Random();
+            var newQuestion = availableQuestions[random.Next(availableQuestions.Count)];
+
+            // 현재 문제 교체
+            _currentQuestions[_currentQuestionIndex] = newQuestion;
+            _isPassUsed = true;
+
+            QuestionChanged?.Invoke(CurrentQuestion);
+            PassStateChanged?.Invoke(_isPassUsed);
+
+            return true;
         }
 
         public void MarkCorrect()

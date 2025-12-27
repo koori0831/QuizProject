@@ -5,13 +5,13 @@ namespace QuizApp.Models
 {
     public class Question
     {
-        public string ImagePath { get; set; }
-        public string Answer { get; set; }
+        public string ImagePath { get; set; } = string.Empty;
+        public string Answer { get; set; } = string.Empty;
     }
 
     public class Theme
     {
-        public string Title { get; set; }
+        public string Title { get; set; } = string.Empty;
         public List<Question> Questions { get; set; } = new List<Question>();
     }
 
