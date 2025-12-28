@@ -82,10 +82,10 @@
                        Appearance="Danger" Height="50" FontSize="16" HorizontalAlignment="Stretch"/>
 
             <ui:Button Grid.Column="2" Content="문제 패스" Icon="{ui:SymbolIcon ArrowSwap24}" Command="{Binding PassCommand}" 
-                       Appearance="Secondary" Height="50" FontSize="16" HorizontalAlignment="Stretch"/>
+                       Appearance="Info" Height="50" FontSize="16" HorizontalAlignment="Stretch"/>
 
             <ui:Button Grid.Column="4" Content="정답" Icon="{ui:SymbolIcon Checkmark24}" Command="{Binding CorrectCommand}" 
-                       Appearance="Primary" Height="50" FontSize="16" HorizontalAlignment="Stretch"/>
+                       Appearance="Success" Height="50" FontSize="16" HorizontalAlignment="Stretch"/>
         </Grid>
     </Grid>
 </Window>
