@@ -29,7 +29,7 @@
                 Padding="15" CornerRadius="8" Margin="0,0,0,20">
             <StackPanel>
                 <DockPanel LastChildFill="False" Margin="0,0,0,10">
-                    <ui:SymbolIcon Symbol="Info24" Margin="0,0,10,0"/>
+                    <ui:SymbolIcon Symbol="Info24" Foreground="CornflowerBlue" Margin="0,0,10,0"/>
                     <TextBlock Text="상태" FontWeight="Bold" VerticalAlignment="Center" Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
                     <TextBlock Text="{Binding CurrentStatusMessage}" Margin="10,0,0,0" Foreground="{DynamicResource SystemAccentColorBrush}" FontWeight="Bold" VerticalAlignment="Center"/>
                 </DockPanel>
@@ -37,9 +37,9 @@
                 <Separator Margin="0,0,0,10"/>
 
                 <DockPanel LastChildFill="False">
-                    <ui:SymbolIcon Symbol="Timer24" Margin="0,0,10,0"/>
+                    <ui:SymbolIcon Symbol="Timer24" Foreground="IndianRed" Margin="0,0,10,0"/>
                     <TextBlock Text="남은 시간" FontWeight="Bold" VerticalAlignment="Center" Foreground="{DynamicResource TextFillColorPrimaryBrush}"/>
-                    <TextBlock Text="{Binding TimerText}" FontSize="28" FontWeight="Bold" Margin="15,0,0,0" Foreground="#FF5555" VerticalAlignment="Center" FontFamily="Consolas"/>
+                    <TextBlock Text="{Binding TimerText}" FontSize="28" FontWeight="Bold" Margin="15,0,0,0" Foreground="IndianRed" VerticalAlignment="Center" FontFamily="Consolas"/>
                 </DockPanel>
             </StackPanel>
         </Border>
