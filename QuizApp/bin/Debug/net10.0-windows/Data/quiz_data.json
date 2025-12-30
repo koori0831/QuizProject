@@ -392,10 +392,6 @@
           "Answer": "\uC11D\uB958"
         },
         {
-          "ImagePath": "Data\\Images\\5e5c5531-870d-4c7b-9fbb-1d8c273d0fa8_3245952b-9e8d-4c9a-8640-77506c1779f1.png",
-          "Answer": "(\uD48B)\uC0AC\uACFC"
-        },
-        {
           "ImagePath": "Data\\Images\\d9cf2d26-3886-4059-8228-c5a2800de399_e02afe1c-abc7-4a74-96ba-4413f4f94d80.png",
           "Answer": "\uCCB4\uB9AC"
         },
@@ -454,6 +450,10 @@
         {
           "ImagePath": "Data\\Images\\b69ec5ee-f19b-49dd-8702-06be2d51d5cc_\uCE7C\uB77C\uB9CC\uC2DC.png",
           "Answer": "\uCE7C\uB77C\uB9CC\uC2DC"
+        },
+        {
+          "ImagePath": "Data\\Images\\05640c9d-d811-46ec-bf9f-4965b78114af_da7c4ccf-e463-4278-ab31-d65f8447aec3.png",
+          "Answer": "\uBB34\uD654\uACFC"
         }
       ]
     },
